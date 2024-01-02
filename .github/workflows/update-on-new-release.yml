@@ -1,0 +1,75 @@
+name: Update on New Sentry Release
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Runs every day at midnight
+
+jobs:
+  update-on-new-release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out the repo
+      uses: actions/checkout@v2
+
+    - name: Check for new release in Sentry repository
+      id: check-release
+      run: |
+        # Fetch the latest release tag from the Sentry repository
+        LATEST_RELEASE_TAG=$(curl -s https://api.github.com/repos/xai-foundation/sentry/releases/latest | jq -r '.tag_name')
+
+        # Read the last line in releases.txt
+        LAST_PROCESSED_TAG=$(tail -n 1 releases.txt)
+
+        # Check if the latest release tag is different from the last processed tag
+        if [ "$LATEST_RELEASE_TAG" != "$LAST_PROCESSED_TAG" ]; then
+          echo "New release found: $LATEST_RELEASE_TAG"
+          echo "::set-output name=new_release_found::true"
+          echo "::set-output name=new_release_tag::$LATEST_RELEASE_TAG"
+        else
+          echo "No new release found"
+          echo "::set-output name=new_release_found::false"
+        fi
+
+    - name: Create a new branch
+      if: steps.check-release.outputs.new_release_found == 'true'
+      run: |
+        git checkout -b update-to-${{ steps.check-release.outputs.new_release_tag }}
+
+    - name: Update releases.txt
+      if: steps.check-release.outputs.new_release_found == 'true'
+      run: |
+        echo "${{ steps.check-release.outputs.new_release_tag }}" >> releases.txt
+        git add releases.txt
+        git commit -m "Update to Sentry release ${{ steps.check-release.outputs.new_release_tag }}"
+
+    - name: Push changes
+      if: steps.check-release.outputs.new_release_found == 'true'
+      run: |
+        git push origin update-to-${{ steps.check-release.outputs.new_release_tag }}
+
+    - name: Create Pull Request
+      if: steps.check-release.outputs.new_release_found == 'true'
+      uses: repo-sync/pull-request@v2
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        pr_title: "Update to Sentry release ${{ steps.check-release.outputs.new_release_tag }}"
+        pr_body: "This PR updates to the latest Sentry release."
+        pr_branch: "update-to-${{ steps.check-release.outputs.new_release_tag }}"
+
+    - name: Merge Pull Request
+      if: steps.check-release.outputs.new_release_found == 'true'
+      uses: pascalgn/automerge-action@v0.14.3
+      with:
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        pull_request: "${{ steps.create-pr.outputs.pr }}"
+        merge_method: squash
+
+    - name: Create a new release in this repo
+      if: steps.check-release.outputs.new_release_found == 'true'
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.check-release.outputs.new_release_tag }}
+        release_name: Release ${{ steps.check-release.outputs.new_release_tag }}
+        body: 'New release matching Sentry release ${{ steps.check-release.outputs.new_release_tag }}'

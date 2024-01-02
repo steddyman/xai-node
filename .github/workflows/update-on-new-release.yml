@@ -49,6 +49,7 @@ jobs:
 
     - name: Create Pull Request
       if: steps.check-release.outputs.new_release_found == 'true'
+      id: create-pr
       uses: repo-sync/pull-request@v2
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}

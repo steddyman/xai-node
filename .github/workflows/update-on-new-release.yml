@@ -19,20 +19,20 @@ jobs:
       run: |
         # Fetch the latest release tag from the Sentry repository
         LATEST_RELEASE_TAG=$(curl -s https://api.github.com/repos/xai-foundation/sentry/releases/latest | jq -r '.tag_name')
-
+    
         # Read the last line in releases.txt
         LAST_PROCESSED_TAG=$(tail -n 1 releases.txt)
-
+    
         # Check if the latest release tag is different from the last processed tag
         if [ "$LATEST_RELEASE_TAG" != "$LAST_PROCESSED_TAG" ]; then
           echo "New release found: $LATEST_RELEASE_TAG"
-          echo "::set-output name=new_release_found::true"
-          echo "::set-output name=new_release_tag::$LATEST_RELEASE_TAG"
+          echo "new_release_found=true" >> $GITHUB_OUTPUT
+          echo "new_release_tag=$LATEST_RELEASE_TAG" >> $GITHUB_OUTPUT
         else
           echo "No new release found"
-          echo "::set-output name=new_release_found::false"
+          echo "new_release_found=false" >> $GITHUB_OUTPUT
         fi
-
+    
     - name: Configure Git
       if: steps.check-release.outputs.new_release_found == 'true'
       run: |

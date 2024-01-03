@@ -24,3 +24,11 @@ spec:
             secretKeyRef:
               name: xai-node-key
               key: PRIVATE_KEY
+        livenessProbe:
+          exec:
+            command:
+            - /usr/local/bin/liveness.sh
+          initialDelaySeconds: 30   # Delay before the first check
+          periodSeconds: 120        # Check every 2 minutes
+          timeoutSeconds: 10        # Time to wait for the probe to succeed
+          failureThreshold: 2       # Number of consecutive failures to be considered failed

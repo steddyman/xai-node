@@ -17,7 +17,7 @@ terminate_script() {
 
 run_sentry_node() {
     expect -c "
-    exp_internal 0
+    exp_internal 1
     log_user 1
     spawn /usr/local/bin/sentry-node-cli-linux
     expect \"\$\"

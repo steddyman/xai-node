@@ -66,14 +66,14 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh pr create --title "The bug is fixed" --body "update-to-${{ steps.check-release.outputs.new_release_tag }}"
+        gh pr create --title "Version ${{ steps.check-release.outputs.new_release_tag }} Release" --body "update-to-${{ steps.check-release.outputs.new_release_tag }}"
 
     - name: Merge Pull Request
       if: steps.check-release.outputs.new_release_found == 'true'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh pr merge --squash --auto --merge update-to-${{ steps.check-release.outputs.new_release_tag }}
+        gh pr merge update-to-${{ steps.check-release.outputs.new_release_tag }} --squash --auto --merge
 
     - name: Create a new release
       if: steps.check-release.outputs.new_release_found == 'true'

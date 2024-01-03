@@ -31,10 +31,16 @@ To view the logs of the running container, run:
 docker logs -f xai-node-container
 ```
 
-To kill the running container, run:
+To stop the running container, run:
 
 ```bash
-docker kill xai-node-container
+docker stop xai-node-container
+```
+
+To remove the container, run:
+
+```bash
+docker rm xai-node-container
 ```
 
 ### Kubernetes Deployment

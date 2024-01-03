@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
 
 # Install NVM
 ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 16.13.0
+ENV NODE_VERSION 20.10.0
 
 RUN mkdir -p $NVM_DIR
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash

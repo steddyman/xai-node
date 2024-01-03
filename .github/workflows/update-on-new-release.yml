@@ -80,4 +80,4 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release create ${{ steps.check-release.outputs.new_release_tag }} --title "Release ${{ steps.check-release.outputs.new_release_tag }}" --notes "New release matching Sentry release ${{ steps.check-release.outputs.new_release_tag }}"
+        gh release create v${{ steps.check-release.outputs.new_release_tag }} --title "Release v${{ steps.check-release.outputs.new_release_tag }}" --notes "New release matching Sentry release ${{ steps.check-release.outputs.new_release_tag }}"

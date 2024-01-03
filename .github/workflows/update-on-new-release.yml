@@ -73,7 +73,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh pr merge update-to-${{ steps.check-release.outputs.new_release_tag }} --squash --auto --merge
+        gh pr merge update-to-${{ steps.check-release.outputs.new_release_tag }} --squash --auto
 
     - name: Create a new release
       if: steps.check-release.outputs.new_release_found == 'true'

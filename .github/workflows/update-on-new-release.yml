@@ -40,6 +40,8 @@ jobs:
 
     - name: Update releases.txt
       if: steps.check-release.outputs.new_release_found == 'true'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         echo "${{ steps.check-release.outputs.new_release_tag }}" >> releases.txt
         git add releases.txt
@@ -47,33 +49,29 @@ jobs:
 
     - name: Push changes
       if: steps.check-release.outputs.new_release_found == 'true'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git push origin update-to-${{ steps.check-release.outputs.new_release_tag }}
 
+
     - name: Create Pull Request
       if: steps.check-release.outputs.new_release_found == 'true'
-      id: create-pr
-      uses: repo-sync/pull-request@v2
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        pr_title: "Update to Sentry release ${{ steps.check-release.outputs.new_release_tag }}"
-        pr_body: "This PR updates to the latest Sentry release."
-        pr_branch: "update-to-${{ steps.check-release.outputs.new_release_tag }}"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh pr create --title "The bug is fixed" --body "update-to-${{ steps.check-release.outputs.new_release_tag }}"
 
     - name: Merge Pull Request
       if: steps.check-release.outputs.new_release_found == 'true'
-      uses: pascalgn/automerge-action@v0.14.3
-      with:
-        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-        pull_request: "${{ steps.create-pr.outputs.pr }}"
-        merge_method: squash
-
-    - name: Create a new release in this repo
-      if: steps.check-release.outputs.new_release_found == 'true'
-      uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ steps.check-release.outputs.new_release_tag }}
-        release_name: Release ${{ steps.check-release.outputs.new_release_tag }}
-        body: 'New release matching Sentry release ${{ steps.check-release.outputs.new_release_tag }}'
+      run: |
+        gh pr merge --squash --auto --merge update-to-${{ steps.check-release.outputs.new_release_tag }}
+
+    - name: Create a new release
+      if: steps.check-release.outputs.new_release_found == 'true'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release create ${{ steps.check-release.outputs.new_release_tag }} --title "Release ${{ steps.check-release.outputs.new_release_tag }}" --notes "New release matching Sentry release ${{ steps.check-release.outputs.new_release_tag }}"

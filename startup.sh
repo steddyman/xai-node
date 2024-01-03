@@ -47,9 +47,9 @@ do
     fi
 
     # Check if the line indicates 'Fetched 0 node licenses' and exit the script if it does
-    if [[ $line == *"Fetched 0 node licenses for owner"* ]]; then
-        echo "** No node licenses found for wallet associated with PRIVATE_KEY, exiting script **"
-        echo "** Please ensure the wallet associated with PRIVATE_KEY has a node license **" >> "$LOG_FILE"
-        terminate_script
-    fi
+    # if [[ $line == *"Fetched 0 node licenses for owner"* ]]; then
+    #     echo "** No node licenses found for wallet associated with PRIVATE_KEY, exiting script **"
+    #     echo "** Please ensure the wallet associated with PRIVATE_KEY has a node license **" >> "$LOG_FILE"
+    #     terminate_script
+    # fi
 done

@@ -20,16 +20,10 @@ The image takes a single environment variable, `PRIVATE_KEY`, which is the priva
 To run the docker image from the command line, run:
 
 ```bash
-docker run --name xai-node-container --pull=always -e PRIVATE_KEY=PRIVATE_KEY_VALUE steddyman/xai-node:latest
+docker run --name xai-node-container --pull=always -e "PRIVATE_KEY=PRIVATE_KEY_VALUE" steddyman/xai-node:latest
 ```
 
 This will download the latest version of the image and run it within docker.  
-
-To view the logs of the running container, run:
-
-```bash
-docker logs -f xai-node-container
-```
 
 To stop the running container, run:
 

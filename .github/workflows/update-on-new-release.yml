@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: '0 0 * * *'  # Runs every day at midnight
 
+  # Add a workflow_dispatch event to manually trigger the workflow
+  workflow_dispatch:
+    
 jobs:
   update-on-new-release:
     runs-on: ubuntu-latest

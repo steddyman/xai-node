@@ -33,6 +33,12 @@ jobs:
           echo "::set-output name=new_release_found::false"
         fi
 
+    - name: Configure Git
+      if: steps.check-release.outputs.new_release_found == 'true'
+      run: |
+        git config --global user.name 'GitHub Action'
+        git config --global user.email 'action@github.com'
+
     - name: Create a new branch
       if: steps.check-release.outputs.new_release_found == 'true'
       run: |

@@ -1,1 +1,2 @@
 Contains history of releases below:
+1.0.35

@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: xai-node-deployment
+  namespace: xai-node
+  labels:
+    app: xai-node
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: xai-node
+  template:
+    metadata:
+      labels:
+        app: xai-node
+    spec:
+      containers:
+      - name: xai-node
+        image: steddyman/xai-node:latest
+        env:
+        - name: PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: xai-node-key
+              key: PRIVATE_KEY

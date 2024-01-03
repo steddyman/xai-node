@@ -24,6 +24,7 @@ run_sentry_node() {
     send \"boot-operator\r\"
     expect \"Enter the private key of the operator:\"
     send \"$PRIVATE_KEY\r\"
+    expect \"Provisioning http provider.\"
     expect \"Do you want to use a whitelist for the operator runtime\"
     send \"n\r\"
     interact

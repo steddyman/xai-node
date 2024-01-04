@@ -1,4 +1,4 @@
-# XAI Sentry Node Docker Image and Helm Chart
+# XAI Sentry Node Docker Image and Kubernetes Manifests
 
 ## Introduction
 

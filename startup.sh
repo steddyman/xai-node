@@ -27,6 +27,7 @@ run_sentry_node() {
     expect \"Provisioning http provider.\"
     expect \"Do you want to use a whitelist for the operator runtime\"
     send \"n\r\"
+    expect \"Something Else for Debugging\"
     interact
     "
 }

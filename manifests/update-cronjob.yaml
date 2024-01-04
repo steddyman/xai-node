@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: update-check-script
+  namespace: xai-node
+data:
+  update-check.sh: |
+    #!/bin/sh
+
+    # Fetch the latest tag from the repository
+    LATEST_TAG=$(curl -s "https://api.github.com/repos/steddyman/xai-node/releases/latest" | jq -r '.tag_name')
+
+    # Get the current image tag in the deployment (extracting just the version part)
+    CURRENT_TAG=$(kubectl get deployment xai-node-deployment -n xai-node -o=jsonpath='{$.spec.template.spec.containers[:1].image}' | sed 's/.*://')
+
+    # Check if the tags are different
+    if [ "$LATEST_TAG" != "$CURRENT_TAG" ]; then
+      # Update the deployment to use the new image
+      kubectl set image deployment/xai-node-deployment xai-node=steddyman/xai-node:$LATEST_TAG -n xai-node
+    fi
+
+---
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: image-update-check
+  namespace: xai-node
+spec:
+  schedule: "*/10 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: update-check
+            image: appropriate/curl
+            command: ["/bin/sh", "-c", "/scripts/update-check.sh"]
+            volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+          restartPolicy: OnFailure
+          volumes:
+          - name: scripts
+            configMap:
+              name: update-check-script
+              defaultMode: 0777
+

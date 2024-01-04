@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This repos produces the Docker image and Helm Chart for the XAI Sentry Node.
+This repos produces the Docker image for the XAI Sentry Node.
 
 The source for the XAI Sentry Node is located at:
 https://github.com/xai-foundation/sentry

@@ -62,3 +62,13 @@ kubectl apply -f manifests/deployment.yaml
 The deployment contains a Kubernetes Liveness Probe that will restart the container if the XAI Sentry Node becomes unresponsive or crashes.
 
 If you wish to deploy multiple nodes with different keys, just create additional namespaces and deploy the new secret and deployment manifests to the new namespace.
+
+## Support Development
+
+If you would like to support the development of the XAI Sentry Node Docker Image, please consider donating to the following addresses:
+
+Ethereum / Arbitrum: 0xA0D4e6501529d25Aa3fcD5d473Ab859235DA49a9
+
+Bitcoin: bc1qq2y7l8d56rs45avsc6yt6l0y7jpru6j0vh6xxk
+
+If you wish to contact me, reach out to me on Twitter (X): https://twitter.com/steddyman

@@ -61,6 +61,12 @@ kubectl apply -f manifests/deployment.yaml
 
 The deployment contains a Kubernetes Liveness Probe that will restart the container if the XAI Sentry Node becomes unresponsive or crashes.
 
+To update the deployment after a new release of the XAI Sentry Node, run:
+
+```bash
+kubectl rollout restart deployment xai-node-deployment -n xai-node
+```
+
 If you wish to deploy multiple nodes with different keys, just create additional namespaces and deploy the new secret and deployment manifests to the new namespace.
 
 ## Support Development

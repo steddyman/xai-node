@@ -2,7 +2,7 @@
 
 # Define the log file and the timeout
 LOG_FILE="/var/log/sentry-node.log"
-TIMEOUT=300 # 5 minutes in seconds
+TIMEOUT=600 # 10 minutes in seconds
 
 # Check if the log file exists
 if [ ! -f "$LOG_FILE" ]; then

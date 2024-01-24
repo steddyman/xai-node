@@ -45,11 +45,11 @@ do
     # And to the console
     echo "$line"
     
-    # Check if the line contains the string 'assertion' and exit the script if it does
-    if [[ $line == *"assertion"* ]]; then
-        echo "** Sentry node crashed, exiting script **"
-        terminate_script
-    fi
+    # # Check if the line contains the string 'assertion' and exit the script if it does
+    # if [[ $line == *"assertion"* ]]; then
+    #     echo "** Sentry node crashed, exiting script **"
+    #     terminate_script
+    # fi
 
     # Check if the line indicates 'Fetched 0 node licenses' and exit the script if it does
     if [[ $line == *"Total Sentry Keys fetched: 0"* ]]; then

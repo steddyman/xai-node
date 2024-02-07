@@ -6,3 +6,4 @@ Contains history of releases below:
 null
 1.0.80
 1.0.81
+1.0.83

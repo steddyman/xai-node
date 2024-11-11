@@ -53,21 +53,43 @@ jobs:
         git add releases.txt
         git commit -m "Update to Sentry release ${{ steps.check-release.outputs.new_release_tag }}"
 
-    - name: Create Pull Request
-      if: steps.check-release.outputs.new_release_found == 'true'
-      id: create_pull_request
-      uses: peter-evans/create-pull-request@v5
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        commit-message: "Update to Sentry release ${{ steps.check-release.outputs.new_release_tag }}"
-        branch: update-to-${{ steps.check-release.outputs.new_release_tag }}
-        title: "Version ${{ steps.check-release.outputs.new_release_tag }} Release"
-        body: "Update to Sentry release ${{ steps.check-release.outputs.new_release_tag }}"
-        delete-branch: true
-
-    - name: Create a new release
+    - name: Push changes
       if: steps.check-release.outputs.new_release_found == 'true'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release create v${{ steps.check-release.outputs.new_release_tag }} --title "Release v${{ steps.check-release.outputs.new_release_tag }}" --notes "New release matching Sentry release ${{ steps.check-release.outputs.new_release_tag }}"
+        git push origin update-to-${{ steps.check-release.outputs.new_release_tag }}
+
+
+    - name: Create Pull Request
+      if: steps.check-release.outputs.new_release_found == 'true'
+      run: |
+        gh pr create \
+          --title "Version ${{ steps.check-release.outputs.new_release_tag }} Release" \
+          --body "Update to Sentry release ${{ steps.check-release.outputs.new_release_tag }}" \
+          --head update-to-${{ steps.check-release.outputs.new_release_tag }} \
+          --base main
+
+    - name: Enable Auto-Merge for Pull Request
+      if: steps.check-release.outputs.new_release_found == 'true'
+      run: |
+        PR_NUMBER=$(gh pr view --json number --jq '.number')
+        gh pr merge $PR_NUMBER --auto --squash
+
+    - name: Wait for Pull Request to be merged
+      if: steps.check-release.outputs.new_release_found == 'true'
+      run: |
+        PR_NUMBER=$(gh pr view --json number --jq '.number')
+        while [ "$(gh pr view $PR_NUMBER --json merged --jq '.merged')" == "false" ]; do
+          echo "Waiting for pull request #$PR_NUMBER to be merged..."
+          sleep 5
+        done
+        echo "Pull request #$PR_NUMBER has been merged."
+
+    - name: Create a new release
+      if: steps.check-release.outputs.new_release_found == 'true'
+      run: |
+        gh release create v${{ steps.check-release.outputs.new_release_tag }} \
+          --title "Release v${{ steps.check-release.outputs.new_release_tag }}" \
+          --notes "New release matching Sentry release ${{ steps.check-release.outputs.new_release_tag }}"
+  

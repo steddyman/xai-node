@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: xai-node
-        image: steddyman/xai-node:latest
+        image: steddyman/xai-node:v1.2.0
         env:
         - name: PRIVATE_KEY
           valueFrom:

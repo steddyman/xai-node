@@ -63,6 +63,8 @@ jobs:
 
     - name: Create Pull Request
       if: steps.check-release.outputs.new_release_found == 'true'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         gh pr create \
           --title "Version ${{ steps.check-release.outputs.new_release_tag }} Release" \
@@ -72,12 +74,16 @@ jobs:
 
     - name: Enable Auto-Merge for Pull Request
       if: steps.check-release.outputs.new_release_found == 'true'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         PR_NUMBER=$(gh pr view --json number --jq '.number')
         gh pr merge $PR_NUMBER --auto --squash
 
     - name: Wait for Pull Request to be merged
       if: steps.check-release.outputs.new_release_found == 'true'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         PR_NUMBER=$(gh pr view --json number --jq '.number')
         while [ "$(gh pr view $PR_NUMBER --json merged --jq '.merged')" == "false" ]; do
@@ -88,6 +94,8 @@ jobs:
 
     - name: Create a new release
       if: steps.check-release.outputs.new_release_found == 'true'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         gh release create v${{ steps.check-release.outputs.new_release_tag }} \
           --title "Release v${{ steps.check-release.outputs.new_release_tag }}" \

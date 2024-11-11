@@ -53,27 +53,17 @@ jobs:
         git add releases.txt
         git commit -m "Update to Sentry release ${{ steps.check-release.outputs.new_release_tag }}"
 
-    - name: Push changes
-      if: steps.check-release.outputs.new_release_found == 'true'
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        git push origin update-to-${{ steps.check-release.outputs.new_release_tag }}
-
-
     - name: Create Pull Request
       if: steps.check-release.outputs.new_release_found == 'true'
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        gh pr create --title "Version ${{ steps.check-release.outputs.new_release_tag }} Release" --body "update-to-${{ steps.check-release.outputs.new_release_tag }}"
-
-    - name: Merge Pull Request
-      if: steps.check-release.outputs.new_release_found == 'true'
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        gh pr merge update-to-${{ steps.check-release.outputs.new_release_tag }} --squash --auto --delete-branch
+      id: create_pull_request
+      uses: peter-evans/create-pull-request@v5
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: "Update to Sentry release ${{ steps.check-release.outputs.new_release_tag }}"
+        branch: update-to-${{ steps.check-release.outputs.new_release_tag }}
+        title: "Version ${{ steps.check-release.outputs.new_release_tag }} Release"
+        body: "Update to Sentry release ${{ steps.check-release.outputs.new_release_tag }}"
+        delete-branch: true
 
     - name: Create a new release
       if: steps.check-release.outputs.new_release_found == 'true'
